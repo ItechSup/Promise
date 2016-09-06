@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Traitement assynchrone</title>
+</head>
+<body>
+    <img src="img-1.png" class="img-1" alt="image 1">
+    <script>
+        var img1 = document.querySelector('.img-1');
+
+
+
+        img1.addEventListener('load', function() {
+            console.log('woo yey image loaded');
+        });
+
+        img1.addEventListener('error', function() {
+            console.log('argh everything\'s broken');
+        });
+    </script>
+</body>
+</html>
