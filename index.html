@@ -8,22 +8,26 @@
     <title>Traitement assynchrone</title>
 </head>
 <body>
-    <img src="img-1.png" class="img-1" alt="image 1">
+    <img src="INVALIDimg-1.png" class="img-1" alt="image 1">
     <script>
         var img1 = document.querySelector('.img-1');
 
-        function loaded() {
-            console.log('woo yey image loaded');
-        }
+        setTimeout(addListeners, 1000);
 
-        if (img1.complete) {
-            loaded();
-        } else {
-            img1.addEventListener('load', loaded);
+        function addListeners() {
+            function loaded() {
+                console.log('woo yey image loaded');
+            }
 
-            img1.addEventListener('error', function() {
-                console.log('argh everything\'s broken');
-            });
+            if (img1.complete) {
+                loaded();
+            } else {
+                img1.addEventListener('load', loaded);
+
+                img1.addEventListener('error', function() {
+                    console.log('argh everything\'s broken');
+                });
+            }
         }
     </script>
 </body>
