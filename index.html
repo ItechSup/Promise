@@ -12,14 +12,14 @@
     <script>
         var img1 = document.querySelector('.img-1');
 
-        // ajoute un délai artificiel avant l'execution du script à titre d'exemple
-        setTimeout(addListeners, 500);
+        function loaded() {
+            console.log('woo yey image loaded');
+        }
 
-        function addListeners() {
-
-            img1.addEventListener('load', function() {
-                console.log('woo yey image loaded');
-            });
+        if (img1.complete) {
+            loaded();
+        } else {
+            img1.addEventListener('load', loaded);
 
             img1.addEventListener('error', function() {
                 console.log('argh everything\'s broken');
