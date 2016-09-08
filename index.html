@@ -63,6 +63,16 @@
             document.getElementById("story").appendChild(chapter);
         }
 
+        getJSON('story.json').then(function(story) {
+            return getJSON(story.chapterUrls[0]);
+        }).then(function(chapter1) {
+            addHtmlToPage(chapter1.html);
+        }).catch(function(err) {
+            console.error("Failed to show chapter", err);
+            addTextToPage("Failed to show chapter");
+        }).then(function() {
+            document.querySelector('.spinner').style.display = 'none';
+        });
     </script>
 </body>
 </html>
