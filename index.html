@@ -8,27 +8,48 @@
     <title>Traitement assynchrone</title>
 </head>
 <body>
-    <img src="INVALIDimg-1.png" class="img-1" alt="image 1">
     <script>
-        var img1 = document.querySelector('.img-1');
+        function get(url) {
+            // Return a new promise.
+            return new Promise(function(resolve, reject) {
+                // Do the usual XHR stuff
+                var req = new XMLHttpRequest();
+                req.open('GET', url);
 
-        setTimeout(addListeners, 1000);
+                req.onload = function() {
+                    // This is called even on 404 etc
+                    // so check the status
+                    if (req.status == 200) {
+                        // Resolve the promise with the response text
+                        resolve(req.response);
+                    }
+                    else {
+                        // Otherwise reject with the status text
+                        // which will hopefully be a meaningful error
+                        reject(Error(req.statusText));
+                    }
+                };
 
-        function addListeners() {
-            function loaded() {
-                console.log('woo yey image loaded');
-            }
+                // Handle network errors
+                req.onerror = function() {
+                    reject(Error("Network Error"));
+                };
 
-            if (img1.complete) {
-                loaded();
-            } else {
-                img1.addEventListener('load', loaded);
-
-                img1.addEventListener('error', function() {
-                    console.log('argh everything\'s broken');
-                });
-            }
+                // Make the request
+                req.send();
+            });
         }
+        get('story.json').then(function(response) {
+            console.log("Success!", response);
+        }, function(error) {
+            console.error("Failure!", error)
+        });
+
+        get('stroy.json').then(function(response) {
+            console.log("Success!", response);
+        }, function(error) {
+            console.error("Failure!", error)
+        });
     </script>
 </body>
 </html>
