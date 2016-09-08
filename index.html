@@ -39,14 +39,16 @@
                 req.send();
             });
         }
-        get('story.json').then(function(response) {
-            return JSON.parse(response)
-        }, function(error) {
-            console.error("Failure!", error)
-        }).then(function(response) {
-            console.log("JSON! Yay!", response)
-        });
 
+        function getJSON(url) {
+            return get(url).then(JSON.parse);
+        }
+
+        getJSON('story.json').then(function(story) {
+            return getJSON(story.chapterUrls[0]);
+        }).then(function(chapter1) {
+            console.log("Got chapter 1!", chapter1);
+        });
     </script>
 </body>
 </html>
