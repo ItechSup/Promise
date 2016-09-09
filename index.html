@@ -16,6 +16,7 @@
 </head>
 <body>
     <div class="spinner">
+        Chargement
         <img src="spinner.gif" alt="chargement...">
     </div>
     <div id="story">
@@ -73,35 +74,23 @@
             document.getElementById('message').appendChild(message);
         }
 
-        // Traitement synchrone
-        function getJSONSync(url) {
-            var req = new XMLHttpRequest();
-            req.open('GET', url, false);
-            req.send(null);
-            if (req.status == 200) {
-                return JSON.parse(req.response);
-            }
-            else {
-                throw Error(req.statusText);
-            }
-        }
-
-        try {
-            var story = getJSONSync('story.json');
+        getJSON('story.json').then(function(story) {
             addHtmlToPage(story.heading);
 
             story.chapterUrls.forEach(function(chapterUrl) {
-                var chapter = getJSONSync(chapterUrl);
-                addHtmlToPage(chapter.html);
+                // Fetch chapter
+                getJSON(chapterUrl).then(function(chapter) {
+                    // and add it to the page
+                    addHtmlToPage(chapter.html);
+                });
             });
-
-            addTextToPage("All done");
-        }
-        catch (err) {
+        }).catch(function(err) {
+            // Catch any error that happened along the way
             addTextToPage("Argh, broken: " + err.message);
-        }
-
-        document.querySelector('.spinner').style.display = 'none';
+        }).then(function() {
+            // Always hide the spinner
+            document.querySelector('.spinner').style.display = 'none';
+        });
     </script>
 </body>
 </html>
