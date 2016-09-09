@@ -6,17 +6,22 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <style type="text/css">
-
+        .chapter::first-letter {
+            color: red;
+            font-size: 130%;
+        }
     </style>
 
     <title>Traitement asynchrone</title>
 </head>
 <body>
-    <h1>Une histoire qui parle de choses</h1>
     <div class="spinner">
         <img src="spinner.gif" alt="chargement...">
     </div>
     <div id="story">
+
+    </div>
+    <div id="message">
 
     </div>
 
@@ -57,22 +62,46 @@
         }
 
         function addHtmlToPage(text) {
-            chapter = document.createElement('p');
+            chapter = document.createElement('div');
+            chapter.className = 'chapter';
             chapter.innerHTML = text;
-
-            document.getElementById("story").appendChild(chapter);
+            document.getElementById('story').appendChild(chapter);
+        }
+        function addTextToPage(text) {
+            message = document.createElement('div');
+            message.innerHTML = text;
+            document.getElementById('message').appendChild(message);
         }
 
-        getJSON('story.json').then(function(story) {
-            return getJSON(story.chapterUrls[0]);
-        }).then(function(chapter1) {
-            addHtmlToPage(chapter1.html);
-        }).catch(function(err) {
-            console.error("Failed to show chapter", err);
-            addTextToPage("Failed to show chapter");
-        }).then(function() {
-            document.querySelector('.spinner').style.display = 'none';
-        });
+        // Traitement synchrone
+        function getJSONSync(url) {
+            var req = new XMLHttpRequest();
+            req.open('GET', url, false);
+            req.send(null);
+            if (req.status == 200) {
+                return JSON.parse(req.response);
+            }
+            else {
+                throw Error(req.statusText);
+            }
+        }
+
+        try {
+            var story = getJSONSync('story.json');
+            addHtmlToPage(story.heading);
+
+            story.chapterUrls.forEach(function(chapterUrl) {
+                var chapter = getJSONSync(chapterUrl);
+                addHtmlToPage(chapter.html);
+            });
+
+            addTextToPage("All done");
+        }
+        catch (err) {
+            addTextToPage("Argh, broken: " + err.message);
+        }
+
+        document.querySelector('.spinner').style.display = 'none';
     </script>
 </body>
 </html>
